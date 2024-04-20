@@ -7,7 +7,8 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "build:local": "eas build --platform android --local --profile development"
+    "build:local": "eas build --platform android --local --profile development",
+    "build:apk": "eas build --platform android --local"
   },
   "dependencies": {
     "@types/react": "~18.2.45",

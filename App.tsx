@@ -3,7 +3,6 @@ import {
   ActivityIndicator,
   Button,
   DeviceEventEmitter,
-  NativeEventEmitter,
   PermissionsAndroid,
   Platform,
   ScrollView,
@@ -13,9 +12,10 @@ import {
   View
 } from 'react-native';
 import { BluetoothManager } from 'react-native-bluetooth-escpos-printer';
-import { PERMISSIONS, RESULTS, requestMultiple } from 'react-native-permissions';
 import ItemList from './ItemList';
 import SamplePrint from './SamplePrint';
+import BluetoothService from './src/services/BluetoothService';
+import PermissionManager from './src/services/PermissionManager';
 
 export const styles = StyleSheet.create({
   container: {
@@ -41,20 +41,12 @@ export const styles = StyleSheet.create({
 const App = () => {
   const [pairedDevices, setPairedDevices] = useState([]);
   const [foundDs, setFoundDs] = useState([]);
-  const [bleOpend, setBleOpend] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [name, setName] = useState('');
   const [boundAddress, setBoundAddress] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  BluetoothManager.isBluetoothEnabled().then(
-    enabled => {
-      setBleOpend(Boolean(enabled));
-      setLoading(false);
-    },
-    err => {
-      err;
-    },
-  );
+  const { bleOpened } = BluetoothService.useBluetoothEnabled();
+  const { devices, pairedDevices: pairedDevice2, connect: connect2, unpair } = BluetoothService.useBluetoothDevices();
 
   const deviceAlreadPaired = useCallback(
     rsp => {
@@ -196,65 +188,55 @@ const App = () => {
 
   const scanBluetoothDevice = async () => {
     setLoading(true);
-    try {
-      const request = await requestMultiple([
-        PERMISSIONS.ANDROID.BLUETOOTH_CONNECT,
-        PERMISSIONS.ANDROID.BLUETOOTH_SCAN,
-        PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
-      ]);
+    const isAllowed = await PermissionManager.requestBluetoothPermission();
 
-      if (request['android.permission.ACCESS_FINE_LOCATION'] === RESULTS.GRANTED) {
-        scanDevices();
-        setLoading(false);
-      } else {
-        setLoading(false);
-      }
-    } catch (err) {
+    if (isAllowed) {
+      const devices = await BluetoothService.scanDevices();
+      console.log('hasil scan devices', devices)
+      setFoundDs(devices);
+
+      setLoading(false);
+    } else {
       setLoading(false);
     }
+
   };
 
   useEffect(() => {
     if (Platform.OS === 'ios') {
-      let bluetoothManagerEmitter = new NativeEventEmitter(BluetoothManager);
-      bluetoothManagerEmitter.addListener(BluetoothManager.EVENT_DEVICE_ALREADY_PAIRED, rsp => {
-        deviceAlreadPaired(rsp);
-      });
-      bluetoothManagerEmitter.addListener(BluetoothManager.EVENT_DEVICE_FOUND, rsp => {
-        deviceFoundEvent(rsp);
-      });
-      bluetoothManagerEmitter.addListener(BluetoothManager.EVENT_CONNECTION_LOST, () => {
-        setName('');
-        setBoundAddress('');
-      });
+      throw new Error('Not implemented');
     } else if (Platform.OS === 'android') {
       DeviceEventEmitter.addListener(BluetoothManager.EVENT_DEVICE_ALREADY_PAIRED, rsp => {
+        console.log('already paired', rsp);
         deviceAlreadPaired(rsp);
       });
-      DeviceEventEmitter.addListener(BluetoothManager.EVENT_DEVICE_FOUND, rsp => {
-        deviceFoundEvent(rsp);
-      });
+      // DeviceEventEmitter.addListener(BluetoothManager.EVENT_DEVICE_FOUND, rsp => {
+      //   console.log('menemukan device event', rsp);
+      //   // deviceFoundEvent(rsp);
+      // });
       DeviceEventEmitter.addListener(BluetoothManager.EVENT_CONNECTION_LOST, () => {
+        console.log('connection lost');
         setName('');
         setBoundAddress('');
       });
       DeviceEventEmitter.addListener(BluetoothManager.EVENT_BLUETOOTH_NOT_SUPPORT, () => {
+        console.log('Bluetooth not support');
         ToastAndroid.show('Device Not Support Bluetooth !', ToastAndroid.LONG);
       });
     }
     if (pairedDevices.length < 1) {
-      scan();
+      // scan();
     }
   }, [boundAddress, deviceAlreadPaired, deviceFoundEvent, pairedDevices, scan]);
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.bluetoothStatusContainer}>
-        <Text style={bleOpend ? { backgroundColor: '#47BF34' } : { backgroundColor: '#A8A9AA' }}>
-          Bluetooth {bleOpend ? 'Aktif' : 'Non Aktif'}
+        <Text style={bleOpened ? { backgroundColor: '#47BF34' } : { backgroundColor: '#A8A9AA' }}>
+          Bluetooth {bleOpened ? 'Aktif' : 'Non Aktif'}
         </Text>
       </View>
-      {!bleOpend && <Text style={styles.bluetoothInfo}>Mohon aktifkan bluetooth anda</Text>}
+      {!bleOpened && <Text style={styles.bluetoothInfo}>Mohon aktifkan bluetooth anda</Text>}
       <Text style={styles.sectionTitle}>Printer yang terhubung ke aplikasi:</Text>
       {boundAddress.length > 0 && (
         <ItemList
