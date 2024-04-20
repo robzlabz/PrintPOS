@@ -1,9 +1,26 @@
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Button, PermissionsAndroid, StyleSheet, Text, View } from 'react-native';
 import { usePrintersDiscovery } from 'react-native-esc-pos-printer';
 import { PrintersList } from './components/PrinterList';
 
 export default function App() {
   const { start, printerError, isDiscovering, printers } = usePrintersDiscovery();
+
+  console.log('printers', printerError);
+
+  const handleScanPrinter = async () => {
+    const statusBluetoothConnect = await PermissionsAndroid.request(
+      'android.permission.BLUETOOTH_CONNECT'
+    );
+    const statusBluetoothScan = await PermissionsAndroid.request(
+      'android.permission.BLUETOOTH_SCAN'
+    );
+    const status = await PermissionsAndroid.request(
+      'android.permission.ACCESS_FINE_LOCATION'
+    );
+    console.log({ statusBluetoothConnect, statusBluetoothScan, status });;
+
+    start();
+  }
 
   return (
     <View style={styles.container}>
@@ -22,7 +39,7 @@ export default function App() {
         <Button
           disabled={isDiscovering}
           title="Search"
-          onPress={() => start()}
+          onPress={handleScanPrinter}
         />
         {printerError ? (
           <Text style={styles.errorText}>{printerError.message}</Text>
