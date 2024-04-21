@@ -156,24 +156,23 @@ export default class BluetoothService {
     static useBluetoothEnabled = () => {
         const [bleOpened, setBleOpened] = useState(false);
 
-        useEffect(() => {
-            const checkBluetoothEnabled = async () => {
-                try {
-                    const enabled = await BluetoothManager.isBluetoothEnabled();
-                    setBleOpened(Boolean(enabled));
-                } catch (err) {
-                    console.error(err);
-                }
-            };
+        const checkBluetoothEnabled = async () => {
+            try {
+                const enabled = await BluetoothManager.isBluetoothEnabled();
+                setBleOpened(Boolean(enabled));
+            } catch (err) {
+                console.error(err);
+            }
+        };
 
+        useEffect(() => {
             checkBluetoothEnabled();
         }, []);
 
-        return { bleOpened };
+        return { bleOpened, checkBluetoothEnabled };
     }
 
     static scanDevices = async (): Promise<BluetoothDevice[]> => {
-        console.log('masuk scan devices');
         try {
             PermissionManager.requestBluetoothPermission();
         } catch (err) {
@@ -181,32 +180,26 @@ export default class BluetoothService {
             return [];
         }
 
-        // try {
-        const devices = await BluetoothManager.scanDevices();
-        const jsonParse = JSON.parse(devices);
-        const pairedDevices = jsonParse.paired.map((device: any) => {
-            console.log({ device })
-            return ({
-                name: device.name,
-                address: device.address,
+        try {
+            const devices = await BluetoothManager.scanDevices();
+            const jsonParse = JSON.parse(devices);
+            const pairedDevices = jsonParse.paired.map((device: any) => {
+                return ({
+                    name: device.name,
+                    address: device.address,
+                });
             });
-        });
-        const foundDevice = jsonParse.found.map((device: any) => {
-            console.log({ device })
-            return ({
-                name: device.name ?? 'Unknown',
-                address: device.address,
+            const foundDevice = jsonParse.found.map((device: any) => {
+                return ({
+                    name: device.name ?? 'Unknown',
+                    address: device.address,
+                });
             });
-        });
-
-        console.log({ pairedDevices, foundDevice })
-
-        return [...pairedDevices, ...foundDevice];
-
-        // } catch (err) {
-        //     console.error(err);
-        //     return [];
-        // }
+            return [...pairedDevices, ...foundDevice];
+        } catch (err) {
+            console.error(err);
+            return [];
+        }
 
     }
 
@@ -215,7 +208,7 @@ export default class BluetoothService {
             PermissionManager.requestBluetoothPermission();
             const isConnected = await BluetoothManager.connect(device.address);
             console.log({ isConnected })
-            return isConnected;
+            return typeof isConnected == 'string';
         } catch (err) {
             console.error(err);
             return false;
@@ -224,7 +217,7 @@ export default class BluetoothService {
 
     static unPair = async (device: BluetoothDevice): Promise<boolean> => {
         try {
-            const isUnpaired = await BluetoothManager.unPair(device.address);
+            const isUnpaired = await BluetoothManager.unpaire(device.address);
             return isUnpaired;
         } catch (err) {
             console.error(err);
