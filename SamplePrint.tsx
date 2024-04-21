@@ -1,7 +1,6 @@
 import React from 'react';
-import {Button, StyleSheet, Text, View} from 'react-native';
-import {BluetoothEscposPrinter} from 'react-native-bluetooth-escpos-printer';
-import {hsdLogo} from './dummy-logo';
+import { Button, StyleSheet, Text, View } from 'react-native';
+import { BluetoothEscposPrinter } from 'react-native-bluetooth-escpos-printer';
 
 const SamplePrint = () => {
     return (
@@ -27,7 +26,7 @@ const SamplePrint = () => {
                 <Button
                     onPress={async () => {
                         await BluetoothEscposPrinter.printQRCode(
-                            'https://hsd.co.id',
+                            'https://github.com',
                             280,
                             BluetoothEscposPrinter.ERROR_CORRECTION.L,
                         ); //.then(()=>{alert('done')},(err)=>{alert(err)});
@@ -59,10 +58,10 @@ const SamplePrint = () => {
                 <Button
                     title="Print Struk Belanja"
                     onPress={async () => {
-                        let columnWidths = [8, 20, 20];
+                        let columnWidths = [4, 14, 14];
                         try {
                             await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
-                            await BluetoothEscposPrinter.printPic(hsdLogo, {width: 250, left: 150});
+                            // await BluetoothEscposPrinter.printPic(logo, { width: 250, left: 150 });
                             await BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
                             await BluetoothEscposPrinter.printColumn(
                                 [48],
@@ -76,35 +75,31 @@ const SamplePrint = () => {
                                 ['https://xfood.id'],
                                 {},
                             );
-                            await BluetoothEscposPrinter.printText(
-                                '================================================',
-                                {},
-                            );
                             await BluetoothEscposPrinter.printColumn(
-                                [24, 24],
+                                [16, 16],
                                 [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
                                 ['Customer', 'Prawito Hudoro'],
                                 {},
                             );
                             await BluetoothEscposPrinter.printColumn(
-                                [24, 24],
+                                [16, 16],
                                 [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
                                 ['Packaging', 'Iya'],
                                 {},
                             );
                             await BluetoothEscposPrinter.printColumn(
-                                [24, 24],
+                                [16, 16],
                                 [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
                                 ['Delivery', 'Ambil Sendiri'],
                                 {},
                             );
                             await BluetoothEscposPrinter.printText(
-                                '================================================',
+                                '================================',
                                 {},
                             );
-                            await BluetoothEscposPrinter.printText('Products\r\n', {widthtimes: 1});
+                            await BluetoothEscposPrinter.printText('Products\r\n', { widthtimes: 1 });
                             await BluetoothEscposPrinter.printText(
-                                '================================================',
+                                '================================',
                                 {},
                             );
                             await BluetoothEscposPrinter.printColumn(
@@ -138,33 +133,33 @@ const SamplePrint = () => {
                                 {},
                             );
                             await BluetoothEscposPrinter.printText(
-                                '================================================',
+                                '================================',
                                 {},
                             );
                             await BluetoothEscposPrinter.printColumn(
-                                [24, 24],
+                                [16, 16],
                                 [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
                                 ['Subtotal', 'Rp.900.000'],
                                 {},
                             );
                             await BluetoothEscposPrinter.printColumn(
-                                [24, 24],
+                                [16, 16],
                                 [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
                                 ['Packaging', 'Rp.6.000'],
                                 {},
                             );
                             await BluetoothEscposPrinter.printColumn(
-                                [24, 24],
+                                [16, 16],
                                 [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
                                 ['Delivery', 'Rp.0'],
                                 {},
                             );
                             await BluetoothEscposPrinter.printText(
-                                '================================================',
+                                '================================',
                                 {},
                             );
                             await BluetoothEscposPrinter.printColumn(
-                                [24, 24],
+                                [16, 16],
                                 [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
                                 ['Total', 'Rp.906.000'],
                                 {},
@@ -178,23 +173,33 @@ const SamplePrint = () => {
                             );
                             await BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
                             await BluetoothEscposPrinter.printColumn(
-                                [48],
+                                [32],
                                 [BluetoothEscposPrinter.ALIGN.CENTER],
                                 ['DP0837849839'],
-                                {widthtimes: 2},
+                                { widthtimes: 2 },
                             );
                             await BluetoothEscposPrinter.printText(
-                                '================================================',
+                                '================================',
                                 {},
                             );
+                            const currentDate = new Date();
+                            const formattedDate = currentDate.toLocaleString('en-US', {
+                                weekday: 'long',
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric',
+                                hour: 'numeric',
+                                minute: 'numeric',
+                                timeZoneName: 'short',
+                            });
                             await BluetoothEscposPrinter.printColumn(
-                                [48],
+                                [32],
                                 [BluetoothEscposPrinter.ALIGN.CENTER],
-                                ['Sabtu, 18 Juni 2022 - 06:00 WIB'],
+                                [formattedDate],
                                 {},
                             );
                             await BluetoothEscposPrinter.printText(
-                                '================================================',
+                                '================================',
                                 {},
                             );
                             await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});

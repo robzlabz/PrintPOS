@@ -10,25 +10,15 @@ export default class PermissionManager {
             buttonPositive: 'Yes',
         };
 
-        const bluetoothConnectGranted = await PermissionsAndroid.request(
+        await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
             permissions,
         );
 
-        if (bluetoothConnectGranted != PermissionsAndroid.RESULTS.GRANTED) {
-            console.error('Bluetooth connect permission denied');
-            return false;
-        }
-
-        const bluetoothScanGranted = await PermissionsAndroid.request(
+        await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
             permissions,
         );
-
-        if (bluetoothScanGranted != PermissionsAndroid.RESULTS.GRANTED) {
-            console.error('Bluetooth scan permission denied');
-            return false;
-        }
 
         const locationGranted = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -36,7 +26,7 @@ export default class PermissionManager {
         );
 
         if (locationGranted != PermissionsAndroid.RESULTS.GRANTED) {
-            console.error('Location permission denied');
+            console.error('Location permission denied', locationGranted);
             return false;
         }
 

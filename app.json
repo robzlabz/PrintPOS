@@ -19,7 +19,6 @@
       "bundleIdentifier": "com.robzlabz.print"
     },
     "android": {
-      "buildType": "apk",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"

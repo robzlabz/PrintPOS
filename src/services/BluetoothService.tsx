@@ -14,34 +14,41 @@ export default class BluetoothService {
         const [devices, setDevices] = useState<BluetoothDevice[]>([]);
         const [pairedDevices, setPairedDevices] = useState<BluetoothDevice[]>([]);
         const [connectedDevice, setConnectedDevice] = useState<BluetoothDevice | null>(null);
+        const [loading, setLoading] = useState(false);
 
-        useEffect(() => {
-            const scanDevices = async () => {
-                try {
-                    const devices = await BluetoothService.scanDevices();
-                    setDevices(devices);
-                } catch (err) {
-                    console.error(err);
-                }
-            };
-
-            scanDevices();
-        }, []);
         const connect = async (device: BluetoothDevice) => {
+            setLoading(true);
             try {
                 const isConnected = await BluetoothService.connect(device);
-                // Handle the connection status if needed
+                setConnectedDevice(isConnected ? device : null);
             } catch (err) {
                 console.error(err);
+            } finally {
+                setLoading(false);
             }
         };
 
+        const scan = async () => {
+            setLoading(true);
+            try {
+                const devices = await BluetoothService.scanDevices();
+                setDevices(devices);
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        }
+
         const unpair = async (device: BluetoothDevice) => {
+            setLoading(true);
             try {
                 const isUnpaired = await BluetoothService.unPair(device);
                 // Handle the unpairing status if needed
             } catch (err) {
                 console.error(err);
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -96,6 +103,23 @@ export default class BluetoothService {
         );
 
         useEffect(() => {
+            const scanDevices = async () => {
+                setLoading(true);
+                try {
+                    PermissionManager.requestBluetoothPermission();
+                    const devices = await BluetoothService.scanDevices();
+                    setDevices(devices);
+                } catch (err) {
+                    console.error(err);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            scanDevices();
+        }, []);
+
+        useEffect(() => {
             if (Platform.OS == 'ios') {
                 throw new Error('Not implemented for iOS');
             }
@@ -105,14 +129,18 @@ export default class BluetoothService {
                 deviceAlreadPaired(rsp);
             });
 
-            // DeviceEventEmitter.addListener(BluetoothManager.EVENT_DEVICE_FOUND, rsp => {
-            //   console.log('menemukan device event', rsp);
-            //   // deviceFoundEvent(rsp);
-            // });
+            DeviceEventEmitter.addListener(BluetoothManager.EVENT_DEVICE_FOUND, rsp => {
+                console.log('menemukan device event', rsp);
+                deviceFoundEvent(rsp);
+            });
 
             DeviceEventEmitter.addListener(BluetoothManager.EVENT_CONNECTION_LOST, () => {
                 console.log('connection lost');
                 setConnectedDevice(null);
+            });
+
+            DeviceEventEmitter.addListener(BluetoothManager.EVENT_CONNECTED, (rsp) => {
+                console.log('ada yang sudah konek', rsp);
             });
 
             DeviceEventEmitter.addListener(BluetoothManager.EVENT_BLUETOOTH_NOT_SUPPORT, () => {
@@ -122,7 +150,7 @@ export default class BluetoothService {
 
         }, [pairedDevices]);
 
-        return { connectedDevice, devices, pairedDevices, connect, unpair };
+        return { connectedDevice, devices, pairedDevices, connect, unpair, loading, scan };
     }
 
     static useBluetoothEnabled = () => {
@@ -184,7 +212,9 @@ export default class BluetoothService {
 
     static connect = async (device: BluetoothDevice): Promise<boolean> => {
         try {
+            PermissionManager.requestBluetoothPermission();
             const isConnected = await BluetoothManager.connect(device.address);
+            console.log({ isConnected })
             return isConnected;
         } catch (err) {
             console.error(err);
