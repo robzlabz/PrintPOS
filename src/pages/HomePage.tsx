@@ -2,12 +2,13 @@ import React from 'react';
 import { ActivityIndicator, Button, ScrollView, StyleSheet, Text, View } from 'react-native';
 import ItemList from '../components/ItemList';
 import SamplePrint from '../components/SamplePrint';
-import BluetoothService from '../services/BluetoothService';
+import { useBluetoothDevices } from '../hooks/useBluetoothDevices';
+import { useBluetoothEnabled } from '../hooks/useBluetoothEnabled';
 
 const HomePage = () => {
 
-    const { bleOpened, checkBluetoothEnabled } = BluetoothService.useBluetoothEnabled();
-    const { devices, pairedDevices, connect, unpair, connectedDevice, loading, scan } = BluetoothService.useBluetoothDevices();
+    const { bleOpened, checkBluetoothEnabled } = useBluetoothEnabled();
+    const { pairedDevices, connect, unpair, connectedDevice, loading, scan } = useBluetoothDevices();
 
     return (
         <ScrollView style={styles.container}>
