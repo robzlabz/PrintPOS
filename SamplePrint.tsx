@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import { BluetoothEscposPrinter } from 'react-native-bluetooth-escpos-printer';
+import { logo } from './dummy-logo';
 
 const SamplePrint = () => {
     return (
@@ -61,10 +62,10 @@ const SamplePrint = () => {
                         let columnWidths = [4, 14, 14];
                         try {
                             await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
-                            // await BluetoothEscposPrinter.printPic(logo, { width: 250, left: 150 });
+                            await BluetoothEscposPrinter.printPic(logo, { width: 250, left: 150 });
                             await BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
                             await BluetoothEscposPrinter.printColumn(
-                                [48],
+                                [32],
                                 [BluetoothEscposPrinter.ALIGN.CENTER],
                                 ['Jl. Brigjen Saptadji Hadiprawira No.93'],
                                 {},
@@ -72,7 +73,7 @@ const SamplePrint = () => {
                             await BluetoothEscposPrinter.printColumn(
                                 [32],
                                 [BluetoothEscposPrinter.ALIGN.CENTER],
-                                ['https://xfood.id'],
+                                ['https://mb888.web.id'],
                                 {},
                             );
                             await BluetoothEscposPrinter.printColumn(
