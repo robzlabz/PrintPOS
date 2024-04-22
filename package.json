@@ -6,16 +6,19 @@
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "build:local": "eas build --platform android --local --profile development",
+    "build:apk": "eas build --platform android --local --profile preview"
   },
   "dependencies": {
     "@types/react": "~18.2.45",
     "expo": "~50.0.14",
     "expo-dev-client": "~3.3.11",
     "expo-status-bar": "~1.11.1",
+    "expo-system-ui": "~2.9.4",
     "react": "18.2.0",
     "react-native": "0.73.6",
-    "react-native-bluetooth-escpos-printer": "git+https://github.com/hudoro-solusi-digital/react-native-bluetooth-escpos-printer",
+    "react-native-bluetooth-escpos-printer": "git+https://github.com/robzlabz/react-native-bluetooth-escpos-printer",
     "react-native-permissions": "^4.1.5",
     "typescript": "^5.3.0"
   },
