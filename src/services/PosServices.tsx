@@ -57,6 +57,11 @@ export default class PosServices {
         return true;
     }
 
+    static printBarcode = async (data: string, type: number = BluetoothEscposPrinter.BARCODETYPE.JAN13): Promise<boolean> => {
+        await BluetoothEscposPrinter.printBarcode(data, type, 3, 120, 0, 2);
+        return true;
+    }
+
     /*
     * align: BluetoothEscposPrinter.ALIGN.LEFT | BluetoothEscposPrinter.ALIGN.CENTER | BluetoothEscposPrinter.ALIGN.RIGHT
     */

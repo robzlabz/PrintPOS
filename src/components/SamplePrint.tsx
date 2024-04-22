@@ -11,15 +11,8 @@ const SamplePrint = () => {
             <View style={styles.btn}>
                 <Button
                     onPress={async () => {
-                        await BluetoothEscposPrinter.printBarCode(
-                            '123456789012',
-                            BluetoothEscposPrinter.BARCODETYPE.JAN13,
-                            3,
-                            120,
-                            0,
-                            2,
-                        );
-                        await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
+                        await PosServices.printBarcode('1234567890128');
+                        await PosServices.printNewLine();
                     }}
                     title="Print BarCode"
                 />
@@ -27,12 +20,8 @@ const SamplePrint = () => {
             <View style={styles.btn}>
                 <Button
                     onPress={async () => {
-                        await BluetoothEscposPrinter.printQRCode(
-                            'https://github.com',
-                            280,
-                            BluetoothEscposPrinter.ERROR_CORRECTION.L,
-                        ); //.then(()=>{alert('done')},(err)=>{alert(err)});
-                        await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
+                        await PosServices.printQRCode('https://mb888.web.id');
+                        await PosServices.printNewLine();
                     }}
                     title="Print QRCode"
                 />
