@@ -7,33 +7,33 @@ This app is an example of an Expo app with a native plugin that can print to an 
 1. Clone the repository:
 
 ```bash
-    git clone https://github.com/your-username/PrintPOS.git
-    ```
+git clone https://github.com/your-username/PrintPOS.git
+```
 
 2. Install the dependencies:
 
 ```bash
-    cd PrintPOS
-    yarn install
-    ```
+cd PrintPOS
+yarn install
+```
 
 3. Make Prebuild APK:
 
 ```bash
-    yarn build:local
-    ```
+yarn build:local
+```
 
 4. Install the APK on your device:
 
 ```bash
-    adb install -r <path>
-    ```
+adb install -r <path>
+```
 
 5. Run Apps
 
 ```bash
-    yarn start
-    ```
+yarn start
+```
 
 ## Usage
 
